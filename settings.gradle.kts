@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "launchpad"
+rootProject.name = "SubwayNow"
 include(":app")
  

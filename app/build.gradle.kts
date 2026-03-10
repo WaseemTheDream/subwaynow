@@ -14,13 +14,13 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.example.launchpad"
+    namespace = "com.waseemahmad.subwaynow"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "com.example.launchpad"
+        applicationId = "com.waseemahmad.subwaynow"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -83,6 +83,24 @@ dependencies {
 
     // Animation
     implementation(libs.androidx.compose.animation)
+
+    // Networking
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging)
+    
+    // Protobuf for GTFS parsing
+    // implementation(libs.protobuf.lite) // TODO: Add back when implementing real GTFS parsing
+    
+    // JSON parsing
+    implementation(libs.gson)
+    
+    // Coroutines
+    implementation(libs.coroutines.android)
+    
+    // Accompanist FlowLayout
+    implementation(libs.accompanist.flowlayout)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
