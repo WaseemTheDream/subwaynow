@@ -24,11 +24,13 @@ fun HomeScreen(navController: NavController) {
     val repository = remember { SubwayRepository() }
     var favoriteStationArrivals by remember { mutableStateOf<List<StationArrivals>>(emptyList()) }
     var isLoading by remember { mutableStateOf(false) }
+    var hasError by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     fun loadFavoriteArrivals() {
         scope.launch {
             isLoading = true
+            hasError = false
             try {
                 val favorites = repository.getFavoriteStations()
                 val arrivals = favorites.mapNotNull { station ->
@@ -36,7 +38,8 @@ fun HomeScreen(navController: NavController) {
                 }
                 favoriteStationArrivals = arrivals
             } catch (e: Exception) {
-                // Handle error
+                hasError = true
+                android.util.Log.e("HomeScreen", "Error loading favorites", e)
             } finally {
                 isLoading = false
             }
@@ -86,12 +89,48 @@ fun HomeScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        if (isLoading) {
+        if (isLoading && favoriteStationArrivals.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
+            }
+        } else if (hasError && favoriteStationArrivals.isEmpty()) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.errorContainer
+                )
+            ) {
+                Column(
+                    modifier = Modifier.padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Unable to load arrivals",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Medium,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Check your internet connection and try again.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Button(
+                        onClick = { loadFavoriteArrivals() },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error
+                        )
+                    ) {
+                        Text("Retry", color = MaterialTheme.colorScheme.onError)
+                    }
+                }
             }
         } else if (favoriteStationArrivals.isEmpty()) {
             Card(

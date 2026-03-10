@@ -57,20 +57,20 @@ class SubwayRepository {
         delay(500) // Simulate network delay
         return sampleStations.map { station ->
             station.copy(isFavorite = station.id in favoriteStationIds)
-        }
+        }.sortedBy { it.name }
     }
     
     suspend fun getFavoriteStations(): List<SubwayStation> {
-        return getAllStations().filter { it.isFavorite }
+        return getAllStations().filter { it.isFavorite }.sortedBy { it.name }
     }
     
     suspend fun searchStations(query: String): List<SubwayStation> {
-        delay(300) // Simulate search delay
+        delay(200) // Reduced search delay for better responsiveness
         return getAllStations().filter {
             it.name.contains(query, ignoreCase = true) ||
             it.borough.contains(query, ignoreCase = true) ||
             it.lines.any { line -> line.name.contains(query, ignoreCase = true) }
-        }
+        }.sortedBy { it.name }
     }
     
     suspend fun getStationArrivals(stationId: String): StationArrivals? {

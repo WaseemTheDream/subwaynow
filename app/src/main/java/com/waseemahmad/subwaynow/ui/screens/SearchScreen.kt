@@ -27,6 +27,7 @@ fun SearchScreen(navController: NavController) {
     var searchResults by remember { mutableStateOf<List<SubwayStation>>(emptyList()) }
     var allStations by remember { mutableStateOf<List<SubwayStation>>(emptyList()) }
     var isLoading by remember { mutableStateOf(false) }
+    var hasError by remember { mutableStateOf(false) }
     var hasSearched by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
@@ -40,10 +41,14 @@ fun SearchScreen(navController: NavController) {
         scope.launch {
             isLoading = true
             hasSearched = true
+            hasError = false
             try {
+                // Add debouncing for better UX
+                kotlinx.coroutines.delay(100)
                 searchResults = repository.searchStations(query)
             } catch (e: Exception) {
-                // Handle error
+                hasError = true
+                android.util.Log.e("SearchScreen", "Error searching stations", e)
             } finally {
                 isLoading = false
             }
@@ -53,6 +58,7 @@ fun SearchScreen(navController: NavController) {
     fun loadAllStations() {
         scope.launch {
             isLoading = true
+            hasError = false
             try {
                 allStations = repository.getAllStations()
                 if (searchQuery.isBlank()) {
@@ -60,7 +66,8 @@ fun SearchScreen(navController: NavController) {
                     hasSearched = true
                 }
             } catch (e: Exception) {
-                // Handle error
+                hasError = true
+                android.util.Log.e("SearchScreen", "Error loading all stations", e)
             } finally {
                 isLoading = false
             }
@@ -108,12 +115,54 @@ fun SearchScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        if (isLoading) {
+        if (isLoading && !hasSearched) {
             Box(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
+            }
+        } else if (hasError && searchResults.isEmpty()) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.errorContainer
+                )
+            ) {
+                Column(
+                    modifier = Modifier.padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Unable to load stations",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Medium,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Check your internet connection and try again.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Button(
+                        onClick = { 
+                            if (searchQuery.isNotEmpty()) {
+                                performSearch(searchQuery)
+                            } else {
+                                loadAllStations()
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error
+                        )
+                    ) {
+                        Text("Retry", color = MaterialTheme.colorScheme.onError)
+                    }
+                }
             }
         } else if (!hasSearched) {
             Card(
