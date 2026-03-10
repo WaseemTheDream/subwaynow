@@ -48,6 +48,7 @@ fun SearchScreen(navController: NavController) {
                 searchResults = repository.searchStations(query)
             } catch (e: Exception) {
                 hasError = true
+                // Log errors for debugging
                 android.util.Log.e("SearchScreen", "Error searching stations", e)
             } finally {
                 isLoading = false
@@ -67,6 +68,7 @@ fun SearchScreen(navController: NavController) {
                 }
             } catch (e: Exception) {
                 hasError = true
+                // Log errors for debugging
                 android.util.Log.e("SearchScreen", "Error loading all stations", e)
             } finally {
                 isLoading = false

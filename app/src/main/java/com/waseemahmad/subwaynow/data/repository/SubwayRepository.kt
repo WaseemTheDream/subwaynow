@@ -1,8 +1,6 @@
 package com.waseemahmad.subwaynow.data.repository
 
 import com.waseemahmad.subwaynow.data.model.*
-// TODO: Re-enable GTFS service in later round
-// import com.waseemahmad.subwaynow.data.service.GTFSRealtimeService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.delay
@@ -10,8 +8,7 @@ import java.io.IOException
 import java.net.UnknownHostException
 
 class SubwayRepository {
-    // TODO: Re-enable GTFS service in later round
-    // private val gtfsService = GTFSRealtimeService()
+    // Note: Real-time GTFS integration planned for future release
     
     // Simulate network connectivity issues
     private fun simulateNetworkDelay() {
@@ -89,8 +86,7 @@ class SubwayRepository {
         val station = sampleStations.find { it.id == stationId } ?: return null
         val stationWithFavorite = station.copy(isFavorite = station.id in favoriteStationIds)
         
-        // TODO: Add real GTFS-RT integration in later round
-        // For now, use mock data to demonstrate functionality
+        // Using enhanced mock data with realistic NYC subway patterns
         delay(1000) // Simulate API call
         val mockArrivals = generateMockArrivals(station.lines)
         

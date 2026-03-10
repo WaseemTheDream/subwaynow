@@ -53,6 +53,7 @@ fun HomeScreen(navController: NavController) {
                 favoriteStationArrivals = arrivals
             } catch (e: Exception) {
                 hasError = true
+                // Log errors for debugging
                 android.util.Log.e("HomeScreen", "Error loading favorites", e)
             } finally {
                 isLoading = false
