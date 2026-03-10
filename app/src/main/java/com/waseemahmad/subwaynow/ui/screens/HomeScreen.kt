@@ -47,6 +47,16 @@ fun HomeScreen(navController: NavController) {
         loadFavoriteArrivals()
     }
 
+    // Auto-refresh every 30 seconds
+    LaunchedEffect(Unit) {
+        while (true) {
+            kotlinx.coroutines.delay(30000) // 30 seconds
+            if (!isLoading) {
+                loadFavoriteArrivals()
+            }
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
