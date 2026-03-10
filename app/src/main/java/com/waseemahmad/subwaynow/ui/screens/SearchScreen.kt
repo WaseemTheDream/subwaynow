@@ -142,7 +142,7 @@ fun SearchScreen(navController: NavController) {
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Check your internet connection and try again.",
+                        text = "Please check your internet connection. Network access is required to search subway stations.",
                         style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onErrorContainer

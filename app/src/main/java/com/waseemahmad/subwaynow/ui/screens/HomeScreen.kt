@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -25,6 +26,7 @@ fun HomeScreen(navController: NavController) {
     var favoriteStationArrivals by remember { mutableStateOf<List<StationArrivals>>(emptyList()) }
     var isLoading by remember { mutableStateOf(false) }
     var hasError by remember { mutableStateOf(false) }
+    var serviceAlert by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
 
     fun loadFavoriteArrivals() {
@@ -32,6 +34,18 @@ fun HomeScreen(navController: NavController) {
             isLoading = true
             hasError = false
             try {
+                // Simulate service alerts (15% chance)
+                serviceAlert = if (Math.random() < 0.15) {
+                    val alerts = listOf(
+                        "4/5/6 lines: Delays due to signal problems at Union Square",
+                        "L train: Weekend service changes in effect",
+                        "N/Q/R/W: Minor delays system-wide due to increased ridership",
+                        "A/C lines: Service change due to track maintenance", 
+                        "7 line: Good service with minor delays"
+                    )
+                    alerts.random()
+                } else null
+                
                 val favorites = repository.getFavoriteStations()
                 val arrivals = favorites.mapNotNull { station ->
                     repository.getStationArrivals(station.id)
@@ -89,6 +103,35 @@ fun HomeScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Service alerts banner
+        serviceAlert?.let { alert ->
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer
+                )
+            ) {
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = "Service Alert",
+                        tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text(
+                        text = alert,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
         if (isLoading && favoriteStationArrivals.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxWidth(),
@@ -116,7 +159,7 @@ fun HomeScreen(navController: NavController) {
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Check your internet connection and try again.",
+                        text = "Please check your internet connection. The app requires network access to load real-time train arrivals.",
                         style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onErrorContainer

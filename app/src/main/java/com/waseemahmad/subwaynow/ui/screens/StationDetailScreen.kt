@@ -262,7 +262,7 @@ fun StationDetailContent(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Check back later for real-time arrival information.",
+                            text = "This may be due to late night service, planned maintenance, or service disruptions. Check back in a few minutes.",
                             style = MaterialTheme.typography.bodyMedium,
                             textAlign = TextAlign.Center,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
