@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.waseemahmad.subwaynow.data.model.StationArrivals
 import com.waseemahmad.subwaynow.data.repository.SubwayRepository
 import com.waseemahmad.subwaynow.ui.components.StationArrivalCard
@@ -19,7 +20,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController) {
     val repository = remember { SubwayRepository() }
     var favoriteStationArrivals by remember { mutableStateOf<List<StationArrivals>>(emptyList()) }
     var isLoading by remember { mutableStateOf(false) }
@@ -118,6 +119,9 @@ fun HomeScreen() {
                         onToggleFavorite = { 
                             repository.toggleFavorite(stationArrivals.station.id)
                             loadFavoriteArrivals()
+                        },
+                        onClick = {
+                            navController.navigate("station_detail/${stationArrivals.station.id}")
                         }
                     )
                 }

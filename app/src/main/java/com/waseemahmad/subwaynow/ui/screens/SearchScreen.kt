@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.waseemahmad.subwaynow.data.model.SubwayStation
 import com.waseemahmad.subwaynow.data.repository.SubwayRepository
 import com.waseemahmad.subwaynow.ui.components.StationCard
@@ -20,7 +21,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen() {
+fun SearchScreen(navController: NavController) {
     val repository = remember { SubwayRepository() }
     var searchQuery by remember { mutableStateOf("") }
     var searchResults by remember { mutableStateOf<List<SubwayStation>>(emptyList()) }
@@ -176,6 +177,9 @@ fun SearchScreen() {
                         onToggleFavorite = { 
                             repository.toggleFavorite(station.id)
                             performSearch(searchQuery) // Refresh results to update favorite status
+                        },
+                        onClick = {
+                            navController.navigate("station_detail/${station.id}")
                         }
                     )
                 }

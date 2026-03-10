@@ -4,6 +4,8 @@ import java.io.FileInputStream
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    // TODO: Add protobuf plugin in later round when compatibility issues are resolved
+    // id("com.google.protobuf") version "0.9.4"
 }
 
 // Load keystore properties
@@ -59,6 +61,24 @@ android {
     }
 }
 
+// TODO: Add protobuf configuration in later round
+/*
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.21.7"
+    }
+    generateProtoTasks {
+        all().forEach { task ->
+            task.builtins {
+                create("java") {
+                    option("lite")
+                }
+            }
+        }
+    }
+}
+*/
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -91,7 +111,8 @@ dependencies {
     implementation(libs.okhttp.logging)
     
     // Protobuf for GTFS parsing
-    // implementation(libs.protobuf.lite) // TODO: Add back when implementing real GTFS parsing
+    // TODO: Re-enable in later round when protobuf plugin works
+    // implementation(libs.protobuf.lite)
     
     // JSON parsing
     implementation(libs.gson)

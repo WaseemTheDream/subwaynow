@@ -1,11 +1,15 @@
 package com.waseemahmad.subwaynow.data.repository
 
 import com.waseemahmad.subwaynow.data.model.*
+// TODO: Re-enable GTFS service in later round
+// import com.waseemahmad.subwaynow.data.service.GTFSRealtimeService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.delay
 
 class SubwayRepository {
+    // TODO: Re-enable GTFS service in later round
+    // private val gtfsService = GTFSRealtimeService()
     
     // Sample stations for demonstration
     private val sampleStations = listOf(
@@ -70,12 +74,23 @@ class SubwayRepository {
     }
     
     suspend fun getStationArrivals(stationId: String): StationArrivals? {
-        delay(1000) // Simulate API call
         val station = sampleStations.find { it.id == stationId } ?: return null
+        val stationWithFavorite = station.copy(isFavorite = station.id in favoriteStationIds)
         
-        // Generate mock arrival data
+        // TODO: Add real GTFS-RT integration in later round
+        // For now, use mock data to demonstrate functionality
+        delay(1000) // Simulate API call
+        val mockArrivals = generateMockArrivals(station.lines)
+        
+        return StationArrivals(
+            station = stationWithFavorite,
+            arrivals = mockArrivals
+        )
+    }
+    
+    private fun generateMockArrivals(lines: List<SubwayLine>): List<TrainArrival> {
         val currentTime = System.currentTimeMillis() / 1000
-        val arrivals = station.lines.flatMap { line ->
+        return lines.flatMap { line ->
             listOf(
                 TrainArrival(
                     line = line,
@@ -101,11 +116,6 @@ class SubwayRepository {
                 )
             )
         }.sortedBy { it.arrivalTime }
-        
-        return StationArrivals(
-            station = station.copy(isFavorite = station.id in favoriteStationIds),
-            arrivals = arrivals
-        )
     }
     
     fun toggleFavorite(stationId: String) {

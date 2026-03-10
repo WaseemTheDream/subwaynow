@@ -17,6 +17,7 @@ import androidx.navigation.compose.rememberNavController
 import com.waseemahmad.subwaynow.ui.screens.FavoritesScreen
 import com.waseemahmad.subwaynow.ui.screens.HomeScreen
 import com.waseemahmad.subwaynow.ui.screens.SearchScreen
+import com.waseemahmad.subwaynow.ui.screens.StationDetailScreen
 
 enum class Screen(val route: String, val title: String, val icon: ImageVector) {
     Home("home", "Home", Icons.Filled.Home),
@@ -35,13 +36,17 @@ fun SubwayNowNavGraph(
         modifier = modifier
     ) {
         composable(Screen.Home.route) {
-            HomeScreen()
+            HomeScreen(navController = navController)
         }
         composable(Screen.Favorites.route) {
             FavoritesScreen()
         }
         composable(Screen.Search.route) {
-            SearchScreen()
+            SearchScreen(navController = navController)
+        }
+        composable("station_detail/{stationId}") { backStackEntry ->
+            val stationId = backStackEntry.arguments?.getString("stationId") ?: return@composable
+            StationDetailScreen(stationId = stationId, navController = navController)
         }
     }
 }
